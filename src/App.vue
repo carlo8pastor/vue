@@ -13,23 +13,23 @@
         />
         <div class="movie-card-content">
           <h2>{{ movie.title }}</h2>
-            <p><strong>Original Title:</strong> {{ movie.original_title }}</p>
-            <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
-            <p><strong>Genres:</strong> {{ movie.genres }}</p>
-            <p><strong>Duration:</strong> {{ movie.runtime }}</p>
-            <p><strong>Rating:</strong> {{ movie.vote_average }}</p>
-            <p><strong>Summary:</strong> {{ movie.overview }}</p>
-            <p><strong>Age Rating:</strong> {{ movie.adult ? 'For adults' : 'Not exclusively for adults' }}</p>
-            <p><strong>Director:</strong> {{ movie.director }}</p>
-            <p><strong>Cast:</strong> {{ movie.cast }}</p>
-            <p><strong>Original Language:</strong> {{ movie.original_language }}</p>
-            <p><strong>Budget:</strong> {{ movie.budget }}</p>
-            <p v-if="movie.trailer">
-              <a :href="movie.trailer" target="_blank" rel="noopener noreferrer">Watch Trailer</a>
-            </p>
+          <p><strong>Original Title:</strong> {{ movie.original_title }}</p>
+          <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
+          <p><strong>Genres:</strong> {{ movie.genres }}</p>
+          <p><strong>Duration:</strong> {{ movie.runtime }}</p>
+          <p><strong>Rating:</strong> {{ movie.vote_average }}</p>
+          <p><strong>Summary:</strong> {{ movie.overview }}</p>
+          <p><strong>Age Rating:</strong> {{ movie.adult ? 'For adults' : 'Not exclusively for adults' }}</p>
+          <p><strong>Director:</strong> {{ movie.director }}</p>
+          <p><strong>Cast:</strong> {{ movie.cast }}</p>
+          <p><strong>Original Language:</strong> {{ movie.original_language }}</p>
+          <p><strong>Budget:</strong> {{ movie.budget }}</p>
+          <p v-if="movie.trailer">
+            <a :href="movie.trailer" target="_blank" rel="noopener noreferrer">Watch Trailer</a>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -40,6 +40,8 @@ export default {
   name: 'MovieComponent',
   setup() {
     const movieList = ref([]);
+    const baseURL = 'https://api.themoviedb.org/3';
+    const apiKey = 'd17f4fce1773d642f23563b737b4f7b3';
 
     const formatRuntime = (runtime) => {
       const hours = Math.floor(runtime / 60);
@@ -62,8 +64,7 @@ export default {
 
     const getMoviesWithDetails = async (page) => {
       try {
-        const apiKey = 'd17f4fce1773d642f23563b737b4f7b3';
-        const res = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&page=${page}`);
+        const res = await fetch(`${baseURL}/discover/movie?api_key=${apiKey}&page=${page}`);
         const json = await res.json();
         return json.results;
       } catch (error) {
@@ -78,12 +79,11 @@ export default {
       const combinedMovies = [...moviesPage1, ...moviesPage2];
 
       const moviesWithDetailsPromises = combinedMovies.map(async (movie) => {
-        const apiKey = 'd17f4fce1773d642f23563b737b4f7b3';
-        const detailsRes = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${apiKey}`);
+        const detailsRes = await fetch(`${baseURL}/movie/${movie.id}?api_key=${apiKey}`);
         const detailsJson = await detailsRes.json();
-        const creditsRes = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${apiKey}`);
+        const creditsRes = await fetch(`${baseURL}/movie/${movie.id}/credits?api_key=${apiKey}`);
         const creditsJson = await creditsRes.json();
-        const videosRes = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${apiKey}`);
+        const videosRes = await fetch(`${baseURL}/movie/${movie.id}/videos?api_key=${apiKey}`);
         const videosJson = await videosRes.json();
 
         const director = creditsJson.crew.find(member => member.job === 'Director');
@@ -115,6 +115,7 @@ export default {
 };
 </script>
 
+
 <style scoped>
 
 .movie-card {
@@ -139,11 +140,10 @@ export default {
   width: 50%;
   height: auto;
   border-radius: 8px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
 }
-
 
 .movie-card-content {
   padding: 16px;
